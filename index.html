@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marshall Tides</title>
+<meta name="description" content="Tide, sun, moon and wind at Marshall on Tomales Bay, with widget layouts for iPhone and Apple Watch.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12l7 7 7-7"/></symbol>
+    <symbol id="i-sunrise" viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M6 16.5a6 6 0 0 1 12 0"/><path d="M12 2.5v5"/><path d="M9.5 5 12 2.5 14.5 5"/><path d="M4.2 10.2l1.6 1.6"/><path d="M19.8 10.2l-1.6 1.6"/></symbol>
+    <symbol id="i-sunset" viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M6 16.5a6 6 0 0 1 12 0"/><path d="M12 2.5v5"/><path d="M9.5 5 12 7.5 14.5 5"/><path d="M4.2 10.2l1.6 1.6"/><path d="M19.8 10.2l-1.6 1.6"/></symbol>
+    <symbol id="i-moonrise" viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M20.5 11.5A6.5 6.5 0 1 1 13.45 4.45 5 5 0 0 0 20.5 11.5z"/><path d="M6 15V7"/><path d="M3.5 9.5 6 7l2.5 2.5"/></symbol>
+    <symbol id="i-moonset" viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M20.5 11.5A6.5 6.5 0 1 1 13.45 4.45 5 5 0 0 0 20.5 11.5z"/><path d="M6 7v8"/><path d="M3.5 12.5 6 15l2.5-2.5"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+    <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19a4.5 4.5 0 0 0 .4-9A6 6 0 0 0 6.3 8.5 4 4 0 0 0 7 19h10.5z"/></symbol>
+    <symbol id="i-partly" viewBox="0 0 24 24"><circle cx="8" cy="7.5" r="3"/><path d="M8 1.5V3M2 7.5h1.5M3.8 3.3l1 1M12.2 3.3l-1 1"/><path d="M18 20.5a3.8 3.8 0 0 0 .3-7.6A5.5 5.5 0 0 0 7.8 11.4 3.5 3.5 0 0 0 8.5 20.5H18z"/></symbol>
+    <symbol id="i-partly-night" viewBox="0 0 24 24"><path d="M12 8.5A4.5 4.5 0 0 1 7 3a4 4 0 1 0 5 5.5z"/><path d="M18 20.5a3.8 3.8 0 0 0 .3-7.6A5.5 5.5 0 0 0 7.8 11.4 3.5 3.5 0 0 0 8.5 20.5H18z"/></symbol>
+    <symbol id="i-fog" viewBox="0 0 24 24"><path d="M3 8h18M5 12.5h14M8 17h9"/></symbol>
+    <symbol id="i-drizzle" viewBox="0 0 24 24"><path d="M17.5 16a4.5 4.5 0 0 0 .4-9A6 6 0 0 0 6.3 5.5 4 4 0 0 0 7 16h10.5z"/><path d="M9 19.5v1M13 19.5v1M17 19.5v1"/></symbol>
+    <symbol id="i-rain" viewBox="0 0 24 24"><path d="M17.5 15a4.5 4.5 0 0 0 .4-9A6 6 0 0 0 6.3 4.5 4 4 0 0 0 7 15h10.5z"/><path d="M8.5 18l-1 3.5M12.5 18l-1 3.5M16.5 18l-1 3.5"/></symbol>
+    <symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/></symbol>
+    <symbol id="i-storm" viewBox="0 0 24 24"><path d="M17.5 14a4.5 4.5 0 0 0 .4-9A6 6 0 0 0 6.3 3.5 4 4 0 0 0 7 14h10.5z"/><path d="M13 13l-2.5 4.5h3L11 22"/></symbol>
+    <symbol id="i-wind" viewBox="0 0 24 24"><path d="M3 8h9a2.5 2.5 0 1 0-2.5-2.5"/><path d="M3 12h13a3 3 0 1 1-3 3"/><path d="M3 16h6a2 2 0 1 1-2 2"/></symbol>
+    <symbol id="i-wind-arrow" viewBox="0 0 24 24"><path d="M12 4v16"/><path d="M6 10l6-6 6 6"/></symbol>
+  </defs>
+</svg>
+
+<div class="page">
+  <header class="masthead">
+    <div>
+      <p class="eyebrow">Tomales Bay · NOAA station 9415625 · 38.16° N, 122.89° W</p>
+      <h1>Marshall Tides</h1>
+    </div>
+    <div class="masthead-r">
+      <p class="date" id="date">—</p>
+      <p class="status" id="status">Loading…</p>
+    </div>
+  </header>
+
+  <section class="now" aria-label="Right now">
+    <div class="readout" id="tide-r"><p class="eyebrow">Tide</p><div id="tide"></div></div>
+    <div class="readout" id="sun-r"><p class="eyebrow">Sun</p><div id="sun"></div></div>
+    <div class="readout" id="moon-r"><p class="eyebrow">Moon</p><div id="moon"></div></div>
+    <div class="readout" id="weather-r"><p class="eyebrow">Weather</p><div id="weather"></div></div>
+  </section>
+
+  <section class="sect">
+    <div class="sect-h">
+      <h2>Tide, sun and moon</h2>
+      <p class="sect-sub">Six hours back, thirty ahead · feet above mean lower low water · night shaded</p>
+    </div>
+    <div class="chart-wrap" id="chart"></div>
+  </section>
+
+  <section class="sect sect-split">
+    <div>
+      <div class="sect-h">
+        <h2>Next 24 hours</h2>
+        <p class="sect-sub">Temperature and wind, arrows point where the wind blows</p>
+      </div>
+      <div class="hourly-scroll"><div class="hourly" id="hourly"></div></div>
+      <div class="daily" id="daily"></div>
+    </div>
+    <div>
+      <div class="sect-h">
+        <h2>Tide table</h2>
+        <p class="sect-sub">Highs and lows in the chart window</p>
+      </div>
+      <table class="tidetable"><thead><tr><th>Day</th><th>Time</th><th></th><th class="num">Height</th></tr></thead><tbody id="tidetable"></tbody></table>
+    </div>
+  </section>
+
+  <section class="sect">
+    <div class="sect-h">
+      <h2>Widget layouts</h2>
+      <p class="sect-sub">At true point sizes, so the fit is what the phone and watch will show</p>
+    </div>
+    <div id="widgets"></div>
+  </section>
+
+  <footer class="foot">
+    <p>Tides: NOAA CO-OPS predictions for Marshall, Tomales Bay (subordinate station 9415625, MLLW). Weather: Open-Meteo. Sun and moon computed locally, good to a few minutes. Times are Pacific.</p>
+    <p>When the live services can't be reached the page shows a labeled sample so the layout can still be judged. Add <code>?sample</code> to the address to force it.</p>
+  </footer>
+</div>
+
+<script type="module" src="src/app.js"></script>
+</body>
+</html>

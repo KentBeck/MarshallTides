@@ -1,8 +1,8 @@
 # Marshall Tides
 
-Tide, sun, moon and wind at Marshall on Tomales Bay, in one glance. This is
-the web layout; it will become an iPhone widget and an Apple Watch
-complication once the layout is right.
+Tide, sun, moon and wind at Marshall on Tomales Bay, in one glance. The
+web page is the reference layout; `apple/` holds the iPhone app and
+widgets and the Apple Watch app and complications built from it.
 
 ## Run it
 
@@ -15,6 +15,10 @@ python3 -m http.server 8000
 
 then open http://localhost:8000. Add `?sample` to the address to see the
 embedded sample data instead of live data.
+
+The page re-renders every minute from its cached data and refetches the
+tides and forecast every hour (or on return to a background tab once the
+data is older than an hour).
 
 Tests:
 
@@ -48,11 +52,8 @@ All times are shown in Pacific time regardless of where the page is viewed.
 - `src/widgets.js` — iPhone (small, medium, large), lock screen and Apple
   Watch mockups at true point sizes.
 
-## Next steps
+## iPhone and Apple Watch
 
-1. **iPhone widget** — the quickest route is [Scriptable](https://scriptable.app):
-   its widgets are JavaScript, so `astro.js`, `tides.js` and `weather.js`
-   port almost unchanged and the layout above is the spec.
-2. **Apple Watch** — Scriptable has no watch support, so the watch needs a
-   small SwiftUI app with WidgetKit complications. The same Swift target can
-   also host the iPhone widgets, replacing the Scriptable version.
+See [`apple/README.md`](apple/README.md). The Xcode project is generated
+with XcodeGen from `apple/project.yml`; the Swift core in `apple/Shared`
+is a port of the modules in `src/`, with the same tests.

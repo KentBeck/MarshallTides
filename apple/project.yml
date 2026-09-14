@@ -1,0 +1,123 @@
+# XcodeGen spec. Generate the project with:
+#   brew install xcodegen && cd apple && xcodegen generate
+name: MarshallTides
+options:
+  bundleIdPrefix: com.kentbeck
+  deploymentTarget:
+    iOS: "17.0"
+    watchOS: "10.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    CODE_SIGN_STYLE: Automatic
+    MARKETING_VERSION: "0.1"
+    CURRENT_PROJECT_VERSION: "1"
+    # Set your team here or in Xcode's Signing & Capabilities.
+    DEVELOPMENT_TEAM: ""
+
+targets:
+  MarshallTides:
+    type: application
+    platform: iOS
+    sources: [MarshallTides, Shared]
+    dependencies:
+      - target: MarshallTidesWidget
+      - target: MarshallTidesWatch
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.kentbeck.marshalltides
+        TARGETED_DEVICE_FAMILY: "1"
+    entitlements:
+      path: MarshallTides/MarshallTides.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.kentbeck.marshalltides]
+    info:
+      path: MarshallTides/Info.plist
+      properties:
+        CFBundleDisplayName: Marshall Tides
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        ITSAppUsesNonExemptEncryption: false
+
+  MarshallTidesWidget:
+    type: app-extension
+    platform: iOS
+    sources: [MarshallTidesWidget, SharedWidget, Shared]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.kentbeck.marshalltides.widget
+    entitlements:
+      path: MarshallTidesWidget/MarshallTidesWidget.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.kentbeck.marshalltides]
+    info:
+      path: MarshallTidesWidget/Info.plist
+      properties:
+        CFBundleDisplayName: Marshall Tides
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+
+  MarshallTidesWatch:
+    type: application
+    platform: watchOS
+    sources: [MarshallTidesWatch, Shared]
+    dependencies:
+      - target: MarshallTidesWatchWidget
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.kentbeck.marshalltides.watchkitapp
+    entitlements:
+      path: MarshallTidesWatch/MarshallTidesWatch.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.kentbeck.marshalltides]
+    info:
+      path: MarshallTidesWatch/Info.plist
+      properties:
+        CFBundleDisplayName: Marshall Tides
+        WKApplication: true
+        WKCompanionAppBundleIdentifier: com.kentbeck.marshalltides
+
+  MarshallTidesWatchWidget:
+    type: app-extension
+    platform: watchOS
+    sources: [MarshallTidesWatchWidget, SharedWidget, Shared]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.kentbeck.marshalltides.watchkitapp.widget
+    entitlements:
+      path: MarshallTidesWatchWidget/MarshallTidesWatchWidget.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.kentbeck.marshalltides]
+    info:
+      path: MarshallTidesWatchWidget/Info.plist
+      properties:
+        CFBundleDisplayName: Marshall Tides
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+
+  MarshallTidesTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [Tests, Shared]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.kentbeck.marshalltides.tests
+
+schemes:
+  MarshallTides:
+    build:
+      targets:
+        MarshallTides: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets: [MarshallTidesTests]
+  MarshallTidesWatch:
+    build:
+      targets:
+        MarshallTidesWatch: all
+    run:
+      config: Debug

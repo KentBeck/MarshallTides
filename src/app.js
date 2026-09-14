@@ -36,12 +36,13 @@ async function load() {
   catch (err) { console.warn('Live data unavailable, using sample:', err); return sampleData(err.message); }
 }
 
-function renderHeader(m) {
+function renderHeader(m, dataAt) {
   $('#date').textContent = fmtLongDate(m.now);
   const status = $('#status');
   if (m.source === 'live') {
     status.className = 'status status-live';
-    status.textContent = `Live · updated ${fmtTime(m.now)}`;
+    status.textContent = `Live · data ${fmtTime(dataAt)} · shown ${fmtTime(m.now)}`;
+    status.title = 'Data refreshes every hour, the display every minute';
   } else {
     status.className = 'status status-sample';
     status.textContent = `Sample data · shown as of ${fmtTime(m.now)}`;
@@ -107,20 +108,56 @@ function renderChart(m) {
   renderTideChart(el, win, { width: Math.max(320, el.clientWidth), height: el.clientWidth < 560 ? 260 : 320, extremes: m.extremes });
 }
 
-async function main() {
-  const data = await load();
-  const model = buildModel(data);
-  renderHeader(model);
+const DISPLAY_EVERY = MIN;
+const DATA_EVERY = 60 * MIN;
+
+let data = null;       // extremes + forecast, refetched hourly
+let dataAt = null;     // wall-clock time of that fetch
+let model = null;
+
+/** Sample data is pinned to a moment; let it drift with the clock so the
+ *  now marker still moves once a minute. */
+function currentNow() {
+  return data.source === 'sample' ? new Date(+data.now + (Date.now() - dataAt)) : new Date();
+}
+
+async function refreshData() {
+  data = await load();
+  dataAt = new Date();
+}
+
+function renderAll() {
+  model = buildModel({ ...data, now: currentNow() });
+  renderHeader(model, dataAt);
   renderNow(model);
   renderChart(model);
   renderHourly(model);
   renderTable(model);
   renderWidgets($('#widgets'), model);
+}
+
+/** Fire on the minute so the display keeps step with the clock. */
+function everyMinute(fn) {
+  const tick = () => { fn(); setTimeout(tick, DISPLAY_EVERY - (Date.now() % DISPLAY_EVERY)); };
+  setTimeout(tick, DISPLAY_EVERY - (Date.now() % DISPLAY_EVERY));
+}
+
+async function main() {
+  await refreshData();
+  renderAll();
 
   let raf;
-  new ResizeObserver(() => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => renderChart(model)); }).observe($('#chart'));
+  new ResizeObserver(() => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => model && renderChart(model)); }).observe($('#chart'));
 
-  if (model.source === 'live') setTimeout(() => location.reload(), 15 * MIN);
+  everyMinute(renderAll);
+  setInterval(async () => { await refreshData(); renderAll(); }, DATA_EVERY);
+
+  // Coming back to a background tab: catch the display up, and the data if it went stale.
+  document.addEventListener('visibilitychange', async () => {
+    if (document.hidden) return;
+    if (Date.now() - dataAt > DATA_EVERY) await refreshData();
+    renderAll();
+  });
 }
 
 main().catch(err => {

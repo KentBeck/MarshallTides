@@ -6,8 +6,12 @@ widgets and the Apple Watch app and complications built from it.
 
 ## Run it
 
-The page is plain HTML and ES modules, no build step. Modules need a server
-(browsers block them from `file://`):
+**Just open it:** double-click `dist/marshall-tides.html`. It is the whole
+page bundled into one file, and it fetches live data from NOAA and
+Open-Meteo directly. Rebuild it after editing anything with `node build.mjs`.
+
+**For development** the source is plain HTML and ES modules, which browsers
+refuse to load from `file://`, so serve the folder:
 
 ```
 python3 -m http.server 8000

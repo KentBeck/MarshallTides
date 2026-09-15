@@ -12,41 +12,68 @@ const ft = h => (Math.round(h * 10) / 10).toFixed(1);
 const deg = t => `${Math.round(t)}°`;
 const icon = (id, cls = '') => `<svg class="ic ${cls}" aria-hidden="true"><use href="#i-${id}"/></svg>`;
 
-function sampleData(note) {
+/** The sample is pinned to a September day; shift it by whole days so it
+ *  sits on today's date and the real clock can drive the display. */
+function sampleData(now) {
+  const days = Math.round((now - new Date(SAMPLE.now)) / DAY);
+  const shift = d => new Date(+d + days * DAY);
+  const weather = parseForecast(SAMPLE.forecast);
   return {
-    now: new Date(SAMPLE.now),
-    extremes: parsePredictions(SAMPLE.predictions),
-    weather: parseForecast(SAMPLE.forecast),
-    source: 'sample', note,
+    extremes: parsePredictions(SAMPLE.predictions).map(e => ({ ...e, time: shift(e.time) })),
+    weather: {
+      current: { ...weather.current, time: now },
+      hourly: weather.hourly.map(h => ({ ...h, time: shift(h.time) })),
+      daily: weather.daily.map(d => ({ ...d, time: shift(d.time) })),
+    },
   };
 }
 
-async function liveData() {
-  const now = new Date();
-  const [extremes, weather] = await Promise.all([
-    fetchExtremes(new Date(+now - DAY), new Date(+now + 2 * DAY)),
-    fetchForecast(STATION.lat, STATION.lng),
-  ]);
-  return { now, extremes, weather, source: 'live' };
-}
-
+/** Tides and weather are fetched independently, so one can be live while
+ *  the other falls back to the sample. `sources` records which is which. */
 async function load() {
-  if (new URLSearchParams(location.search).has('sample')) return sampleData('Sample requested');
-  try { return await liveData(); }
-  catch (err) { console.warn('Live data unavailable, using sample:', err); return sampleData(err.message); }
+  const now = new Date();
+  const sample = sampleData(now);
+  const forced = new URLSearchParams(location.search).has('sample');
+  const attempt = forced
+    ? () => Promise.reject(new Error('sample requested'))
+    : null;
+  const [tides, weather] = await Promise.allSettled([
+    attempt ? attempt() : fetchExtremes(new Date(+now - DAY), new Date(+now + 2 * DAY)),
+    attempt ? attempt() : fetchForecast(STATION.lat, STATION.lng),
+  ]);
+  const report = (r, name) => r.status === 'fulfilled'
+    ? { live: true }
+    : { live: false, error: `${name}: ${r.reason?.message || r.reason}` };
+  const sources = { tides: report(tides, 'NOAA'), weather: report(weather, 'Open-Meteo') };
+  for (const k of Object.keys(sources)) if (!sources[k].live) console.warn(sources[k].error);
+  const liveCount = Object.values(sources).filter(s => s.live).length;
+  return {
+    now,
+    extremes: tides.status === 'fulfilled' ? tides.value : sample.extremes,
+    weather: weather.status === 'fulfilled' ? weather.value : sample.weather,
+    sources,
+    source: liveCount === 2 ? 'live' : liveCount === 1 ? 'partial' : 'sample',
+  };
 }
 
 function renderHeader(m, dataAt) {
   $('#date').textContent = fmtLongDate(m.now);
   const status = $('#status');
+  const { tides, weather } = m.sources;
+  const errors = [tides, weather].filter(s => !s.live).map(s => s.error).join(' · ');
+  const blocked = !tides.live && !weather.live && /Failed to fetch|Load failed|NetworkError/.test(errors);
   if (m.source === 'live') {
     status.className = 'status status-live';
     status.textContent = `Live · data ${fmtTime(dataAt)} · shown ${fmtTime(m.now)}`;
     status.title = 'Data refreshes every hour, the display every minute';
+  } else if (m.source === 'partial') {
+    status.className = 'status status-sample';
+    status.textContent = `${tides.live ? 'Tides live, weather sample' : 'Weather live, tides sample'} · ${errors}`;
   } else {
     status.className = 'status status-sample';
-    status.textContent = `Sample data · shown as of ${fmtTime(m.now)}`;
-    status.title = m.note || '';
+    status.textContent = blocked
+      ? 'Sample data · this page can\'t reach the internet from here, so NOAA and Open-Meteo are unreachable. Serve it from your own machine or GitHub Pages for live data.'
+      : `Sample data · ${errors}`;
   }
 }
 
@@ -115,19 +142,13 @@ let data = null;       // extremes + forecast, refetched hourly
 let dataAt = null;     // wall-clock time of that fetch
 let model = null;
 
-/** Sample data is pinned to a moment; let it drift with the clock so the
- *  now marker still moves once a minute. */
-function currentNow() {
-  return data.source === 'sample' ? new Date(+data.now + (Date.now() - dataAt)) : new Date();
-}
-
 async function refreshData() {
   data = await load();
   dataAt = new Date();
 }
 
 function renderAll() {
-  model = buildModel({ ...data, now: currentNow() });
+  model = buildModel({ ...data, now: new Date() });
   renderHeader(model, dataAt);
   renderNow(model);
   renderChart(model);

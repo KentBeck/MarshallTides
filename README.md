@@ -16,6 +16,11 @@ python3 -m http.server 8000
 then open http://localhost:8000. Add `?sample` to the address to see the
 embedded sample data instead of live data.
 
+To host it, turn on GitHub Pages once (Settings → Pages → Source: GitHub
+Actions); `.github/workflows/pages.yml` then publishes every push to
+`main`. The Claude artifact preview can't reach the internet, so it always
+shows the sample.
+
 The page re-renders every minute from its cached data and refetches the
 tides and forecast every hour (or on return to a background tab once the
 data is older than an hour).

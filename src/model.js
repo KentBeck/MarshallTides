@@ -48,7 +48,7 @@ export function windowFor(model, pastHours, futureHours) {
   };
 }
 
-export function buildModel({ now, extremes, weather, source, note }) {
+export function buildModel({ now, extremes, weather, source = 'live', sources = {} }) {
   const { lat, lng } = STATION;
   const sky = skyEvents(addDays(now, -1), addDays(now, 2), lat, lng);
   const today = sunTimes(now, lat, lng);
@@ -64,7 +64,7 @@ export function buildModel({ now, extremes, weather, source, note }) {
   const current = weather.current;
 
   return {
-    now, source, note, station: STATION,
+    now, source, sources, station: STATION,
     extremes, sky, tide,
     sun: { ...today, next: nextSun, daylight: today.sunset - today.sunrise },
     moon: {

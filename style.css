@@ -68,7 +68,7 @@ code { font-family: var(--font-mono); font-size: 0.9em; background: var(--line-2
 .masthead { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; justify-content: space-between; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
 .masthead-r { text-align: right; display: grid; gap: 4px; justify-items: end; }
 .date { font-size: 14px; color: var(--ink-2); }
-.status { font-size: 12px; padding: 3px 9px; border-radius: 999px; display: inline-block; }
+.status { font-size: 12px; padding: 3px 9px; border-radius: 999px; display: inline-block; max-width: 46ch; text-align: right; line-height: 1.4; }
 .status-live { background: var(--tide-soft); color: var(--tide); }
 .status-sample { background: rgba(201, 125, 18, 0.14); color: var(--sun); }
 
